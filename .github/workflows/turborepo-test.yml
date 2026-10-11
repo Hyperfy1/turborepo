@@ -451,7 +451,7 @@ jobs:
       # For the OIDC token exchanged for a Remote Cache access token.
       id-token: write
     env:
-      TURBO_CACHE: ${{ (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && 'remote:rw' || 'local:rw' }}
+      TURBO_CACHE: ${{ vars.TURBO_TEAM != '' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && 'remote:rw' || 'local:rw' }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -467,7 +467,7 @@ jobs:
       # Pushes and same-repository PRs can mint OIDC tokens. Fork PRs remain
       # local-only.
       - name: Set up Turborepo Remote Cache
-        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        if: vars.TURBO_TEAM != '' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: vercel/setup-turborepo-remote-cache-action@49d7b1b46ba4c9251e1977986bfe18336feabc8f # v1.1.0
         with:
           team: ${{ vars.TURBO_TEAM }}
